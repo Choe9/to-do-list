@@ -1,4 +1,5 @@
 import { atom, selector } from "recoil";
+import { recoilPersist } from "recoil-persist";
 
 export enum Categories {
   "TO_DO" = "TO_DO",
@@ -17,10 +18,10 @@ export const categoryState = atom<Categories>({
   default: Categories.TO_DO,
 });
 
-export const toDoState = atom<IToDo[]>({
-  key: "toDo",
-  default: [],
-});
+// export const toDoState = atom<IToDo[]>({
+//   key: "toDo",
+//   default: [],
+// });
 
 export const toDoSelector = selector({
   key: "toDoSelector",
@@ -29,4 +30,15 @@ export const toDoSelector = selector({
     const category = get(categoryState);
     return toDos.filter((toDo) => toDo.category === category);
   },
+});
+
+const { persistAtom } = recoilPersist({
+  key: "todoLocal",
+  storage: localStorage,
+});
+
+export const toDoState = atom<IToDo[]>({
+  key: "toDo",
+  default: [],
+  effects_UNSTABLE: [persistAtom],
 });
